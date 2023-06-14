@@ -74,7 +74,7 @@ class CommandOption(Enum):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Example (random) system")
+        description="Simple LLM baseline system")
 
     parser.add_argument('-a', '--api_endpoint',
                         default="http://127.0.0.1:8080",
@@ -84,7 +84,8 @@ def main():
     parser.add_argument('-u', '--username',
                         type=str,
                         default='ALIGN-ADM',
-                        help="ADM Username (provided to TA3 API server)")
+                        help='ADM Username (provided to TA3 API server, '
+                             'default: "ALIGN-ADM")')
     parser.add_argument('-m', '--model',
                         type=str,
                         default="gpt-j",
