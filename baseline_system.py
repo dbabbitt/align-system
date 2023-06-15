@@ -1,8 +1,10 @@
 import argparse
 from dataclasses import dataclass
-from typing import List
+from typing import List, Set
 import sys
 from enum import Enum
+import re
+import random
 
 from swagger_client import ItmMvpApi
 from swagger_client.configuration import Configuration
@@ -39,8 +41,8 @@ class ADMKnowledge:
 
     # Patients
     patients: List[Patient] = None
-    all_patient_ids: List[str] = None
-    treated_patient_ids: List[str] = None
+    all_patient_ids: Set[str] = None
+    treated_patient_ids: Set[str] = None
     treated_all_patients: bool = False
 
     # Probes
@@ -117,13 +119,34 @@ def adm_knowledge_from_scenario(scenario):
     adm_knowledge.patients = scenario.patients
     adm_knowledge.all_patient_ids =\
         {patient.id for patient in scenario.patients}
-    adm_knowledge.treated_patient_ids = {}
+    adm_knowledge.treated_patient_ids = set()
     adm_knowledge.probes_received = []
     adm_knowledge.supplies = scenario.medical_supplies
     adm_knowledge.environment = scenario.environment
     adm_knowledge.description = scenario.description
 
     return adm_knowledge
+
+
+# Current version of TA-3 API expects the provided explanation to be
+# one of the medical supplies available (rather than a freeform
+# response)
+def _map_explanation_to_available_supply(
+        text_explanation, supplies, fallback_to_random=False):
+    supply_names_re = re.compile(
+        '({})'.format('|'.join([s.name for s in supplies])), re.I)
+
+    mentioned_supplies = re.findall(supply_names_re, text_explanation)
+
+    if len(mentioned_supplies) == 0:
+        selection = None
+    else:
+        selection = mentioned_supplies[0].lower()
+
+    if selection is None and fallback_to_random:
+        selection = random.choice([s.name for s in supplies])
+
+    return selection
 
 
 def run_baseline_system(api_endpoint, username, model):
@@ -135,14 +158,14 @@ def run_baseline_system(api_endpoint, username, model):
     scenario = retrieve_scenario(client, username)
     adm_knowledge = adm_knowledge_from_scenario(scenario)
 
+    llm_baseline = LLMBaseline(
+        device="cuda", model_use=model, distributed=False)
+    llm_baseline.load_model()
+
     # Break if we've treated all patients
     while not adm_knowledge.check_treated_all_patients():
         current_probe = retrieve_probe(client, scenario.id)
         adm_knowledge.probes_received.append(current_probe)
-
-        llm_baseline = LLMBaseline(
-            device="cuda", model_use=model, distributed=False)
-        llm_baseline.load_model()
 
         if model == "instruct-gpt-j":
             prompt = prepare_prompt_instruct_gpt_j(scenario, current_probe)
@@ -152,6 +175,7 @@ def run_baseline_system(api_endpoint, username, model):
         print("* Prompt for ADM: {}".format(prompt))
 
         raw_response = llm_baseline.run_inference(prompt)
+
         print("* ADM Raw response: {}".format(raw_response))
         selected_patient_id = select_first_mentioned_patient(raw_response)
 
@@ -159,18 +183,26 @@ def run_baseline_system(api_endpoint, username, model):
             print("* ADM Selected: '{}'".format(selected_patient_id))
 
         # Just pick first untreated patient if unable to parse patient
-        # ID from model response
-        if selected_patient_id is None:
+        # ID from model response, or if patient has already been treated
+        if(selected_patient_id is None
+           or selected_patient_id in adm_knowledge.treated_patient_ids):
             print("* Picking random patient ..")
-            selected_patient_id = list(
-                adm_knowledge.untreated_patients())[0].id
+            selected_patient_id = random.choice(
+                list(adm_knowledge.untreated_patients()))
             print("** Selected: '{}'".format(selected_patient_id))
+
+        explanation = _map_explanation_to_available_supply(
+            raw_response, adm_knowledge.supplies, fallback_to_random=True)
+
+        print("** Mapped explanation: '{}'".format(explanation))
 
         print()
         answer_probe(client,
                      current_probe.id,
                      selected_patient_id,
-                     explanation=raw_response)
+                     explanation=explanation)
+
+        adm_knowledge.treated_patient_ids.add(selected_patient_id)
 
 
 if __name__ == "__main__":
