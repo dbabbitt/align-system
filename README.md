@@ -2,6 +2,10 @@
 
 ## Setup
 
+### System requirements
+It's recommended to run the system on a machine with at least 32GB of
+RAM and with a modern GPU with at least 12GB of memory.
+
 ### TA3 API
 The ALIGN System interfaces with the TA3 ITM MVP web API
 (https://github.com/NextCenturyCorporation/itm-mvp), which is
@@ -64,3 +68,8 @@ An example invocation of the system:
 ```
 $ python baseline_system.py --model gpt-j
 ```
+
+*NOTE* - The first time you run the system it can take upwards of a
+half-hour to download the LLM model (which is roughly 25GB).
+Subsequent runs of the system should only take a few minutes as the
+model is cached.
