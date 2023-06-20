@@ -2,9 +2,9 @@
 
 # Soli Deo gloria
 
-# Run this in an Admin PowerShell window:
+# Run this in a PowerShell window:
 # 
-# cd $Env:UserProfile\Documents\GitHub\notebooks\ps1
+# cd $Env:UserProfile\Documents\GitHub\align-system\ps1
 # cls
 # .\launch_kitware_align_system.ps1
 
@@ -13,6 +13,8 @@ $RepositoryName = "align-system"
 $EnvironmentName = "align_system"
 $HomeDirectory = $Env:UserProfile
 $RepositoriesDirectory = "${HomeDirectory}\Documents\GitHub"
+$RepositoryPath = "${RepositoriesDirectory}\${RepositoryName}"
+$PowerScriptsDirectory = "${RepositoryPath}\ps1"
 $EnvironmentLocation = "${HomeDirectory}\anaconda3\envs\${EnvironmentName}"
 
 conda activate base
@@ -117,12 +119,12 @@ if (Test-Path $FilePath) {
 	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
 	Write-Host "  Installing the required dependencies in the ${EnvironmentName} environment" -ForegroundColor Green
 	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	cd "${RepositoriesDirectory}\${RepositoryName}"
+	cd $RepositoryPath
 	pip install -r requirements.txt
 }
 
 # Install the TA3 ITM MVP modules
-."${RepositoriesDirectory}\${RepositoryName}\ps1\install_ncc_itm_mvp.ps1"
+."${PowerScriptsDirectory}\install_ncc_itm_mvp.ps1"
 
 # Run the Server
 Write-Host ""

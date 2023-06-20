@@ -1,0 +1,66 @@
+{
+    "data": {
+        "editor:align-system/README.md": {
+            "data": {
+                "factory": "Editor",
+                "path": "align-system/README.md"
+            }
+        },
+        "file-browser-filebrowser:cwd": {
+            "path": "align-system/explorations"
+        },
+        "layout-restorer:data": {
+            "down": {
+                "size": 0,
+                "widgets": [
+                ]
+            },
+            "left": {
+                "collapsed": false,
+                "current": "filebrowser",
+                "visible": true,
+                "widgets": [
+                    "filebrowser",
+                    "running-sessions",
+                    "@jupyterlab/toc:plugin",
+                    "extensionmanager.main-view"
+                ]
+            },
+            "main": {
+                "dock": {
+                    "currentIndex": 0,
+                    "type": "tab-area",
+                    "widgets": [
+                        "editor:align-system/README.md",
+                        "notebook:align-system/explorations/ITM Align System Exploration.ipynb"
+                    ]
+                }
+            },
+            "relativeSizes": [
+                0.225159929363129,
+                0.774840070636871,
+                0
+            ],
+            "right": {
+                "collapsed": true,
+                "visible": true,
+                "widgets": [
+                    "jp-property-inspector",
+                    "debugger-sidebar"
+                ]
+            },
+            "top": {
+                "simpleVisibility": true
+            }
+        },
+        "notebook:align-system/explorations/ITM Align System Exploration.ipynb": {
+            "data": {
+                "factory": "Notebook",
+                "path": "align-system/explorations/ITM Align System Exploration.ipynb"
+            }
+        }
+    },
+    "metadata": {
+        "id": "default"
+    }
+}

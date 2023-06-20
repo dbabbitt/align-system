@@ -4,6 +4,7 @@
 
 # Run this in a PowerShell window:
 # 
+# conda activate base
 # cd $Env:UserProfile\Documents\GitHub\align-system\ps1
 # cls
 # .\create_align_system_temp_environment_yml_file.ps1
@@ -12,9 +13,11 @@
 $DisplayName = "ALIGN System"
 $RepositoryName = "align-system"
 $EnvironmentName = "align_system"
+
 $HomeDirectory = $Env:UserProfile
+$EnvironmentsDirectory = "${HomeDirectory}\anaconda3\envs"
 $RepositoriesDirectory = "${HomeDirectory}\Documents\GitHub"
-$EnvironmentPath = "${HomeDirectory}\anaconda3\envs\${EnvironmentName}"
+$EnvironmentPath = "${EnvironmentsDirectory}\${EnvironmentName}"
 $OldPath = Get-Location
 
 conda info --envs

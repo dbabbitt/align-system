@@ -2,7 +2,7 @@
 
 # Soli Deo gloria
 
-# Run this in an Admin PowerShell window:
+# Run this in a PowerShell window:
 # 
 # cd $Env:UserProfile\Documents\GitHub\notebooks\ps1
 # cls
