@@ -1,0 +1,72 @@
+
+Evaluation (TA3) Tasks
+
+Responsibilities:
+Responsible for designing and executing overall program evaluations, evaluating both TA1 and TA2.
+Responsible for implementing the computational representation and the metadata stream defining scenario environment state.
+Responsible for negotiating the Associate Contractor Agreement (ACA) across all selected performers.
+Responsible for providing scenario environments for Phase 1 and Phase 2 and defining domain specifications to include key domain elements and knowledge sources.
+Responsible for providing the computational representation and the metadata stream defining the state of the scenario environment at any time point in the scenario.
+Responsible for providing the human decision-makers used in any of the program evaluations.
+
+Proposal Tasks:
+Clearly identify all Human Subjects Research (HSR) elements and which elements of the SOW include Human Subjects Research (HSR).
+Demonstrate expertise with Human Subjects Research (HSR) and provide a draft Human Subjects Research (HSR) protocol that supports the program evaluations.
+Describe in detail the scenario environments we will provide to the program, including how the environment will support Phase 1 and Phase 2 domains.
+Describe the aspects of psychological fidelity that are important for difficult decision-making and how those aspects are supported by the planned scenario environments.
+Identify a scenario environment or multiple scenario environments that will be provided to the program.
+Identify key confounding variables in the evaluation and describe how they will be controlled for in the evaluation design and execution.
+Identify one or more trust scales that will be used to evaluate TA1 alignment score.
+Provide a plan for executing capstone demonstration events at the end of each phase.
+Provide a plan for supplying trusted human decision-makers as part of the evaluation process, to include expected backgrounds and level of expertise.
+Provide a constructive task breakdown and plan for achieving the program goals, including interactions with the other TAs.
+
+Evaluation Tasks:
+Assess the willingness of humans to delegate difficult decisions to TA2’s human-aligned algorithmic decision-makers.
+Collaborate closely with TA1 and TA2 teams in support of the evaluation.
+Collaborate with TA1 and TA2 to convert documents into a shared computable representation that can be ingested by the decision-making algorithms.
+Collaborate with TA1 performers on computational representations for the scenarios, probes, and scenario context.
+Conduct a dry run evaluation of the algorithmic decision-makers and the decision-maker characterization approaches in each phase.
+Conduct an end of phase evaluation and capstone demo for each phase, targeting assessment of TA1 and TA2 against the program specified metrics as well as any additional metrics developed by yourselves.
+Coordinate the capstone events.
+Define a geometric region in the plane of the attributes that corresponds to attributes of a large subgroup of the trusted humans.
+Define the number and types of participants necessary for meaningful Human Subjects Research (HSR) experiments.
+Design and execute Human Subjects Research (HSR) experiments that execute the program evaluation, in accordance with the program provided metrics.
+Develop decision-makers that can be used to test the alignment score (with a human trust scale) in controlled ways.
+Develop novel reference distributions to support evaluation.
+Develop techniques for programmatically ablating, manipulating, or fuzzing scenario context in carefully designed ways to test the impact of imperfect perception or situational understanding in real-world scenarios.
+During program evaluations, provide access to trusted human decision-makers with relevant expertise in the ITM domains (decision-maker pool) that are: 1) small in size, perhaps on the order of 3 to 5 individuals, and 2) drawn from a population of humans that are already trusted to make critical decisions in ITM domains.
+Evaluate TA1’s ability to: 1) characterize decision-makers and to 2) generate meaningful alignment scores for an algorithmic decision-maker, such as those produced by TA2.
+Explain any elements of psychological fidelity that may not be well aligned with the proposed environments.
+Explain which key elements of psychological fidelity will be well supported by the proposed scenario environments.
+Hold out a set of probes that elicited the same attributes from the trusted decision-makers, and use those to verify that TA2’s aligned algorithm is expressing attributes within the designated geometric region.
+Identify and provide TA2 with a set of natural language domain knowledge documents.
+Identify self-report trust measures that are appropriate as a comparison for the TA1 alignment score and justify why those particular trust measures are preferred.
+Include test conditions with the environment and scenarios represented at various levels of detail to test the impact of imperfect situational awareness.
+Organize and conduct end of phase demonstration events.
+Participate in a peer review process for the TA1 and TA2 alignment process, including reviewing scenario and probe design.
+Process the recommendations from TA4 on policy and ROE documents that could be provided in the documents defining the algorithm domain knowledge.
+Provide a quantitative analysis of humans’ willingness to delegate to ITM algorithms versus algorithms that do not implement the key attributes identified by TA1.
+Provide a working definition of psychological fidelity as it will pertain to the ITM scenario environments and scenarios.
+Provide any necessary human decision-makers, including reference decision-makers, for the evaluations.
+Provide detailed, written reports for dry run, interim, and final evaluations that both summarize performance and provide insightful analysis of the strengths and weaknesses of TA1 and TA2 approaches no greater than 45 days after the execution of an evaluation event.
+Provide domain knowledge documents that form the semantic basis for the scenarios and probes in each of the ITM domains.
+Provide key attributes, reference distribution, and alignment scoring framework to TA2.
+Provide one or more reference distributions (with attributes that are consistent with those identified by TA1) along with the probes that were used to generate the distribution.
+Provide the scenario environments.
+Provided TA2 with information on a particular human decision-maker in the form of the decision-maker attributes and their reference distribution.
+Supply scenario environments that support TA1 and TA2 development and evaluation for the program chosen domains or use existing scenario environments.
+Test a baseline TA2 algorithm to understand what attributes are expressed by the algorithm and what region of the attribute space is defined by those attributes.
+Use TA2 algorithms as part of the evaluation process for TA1’s alignment score.
+
+Optional Tasks:
+Propose changes to the 0.25-then-0.4 alignment score test design (that will assess whether the TA1 alignment score is a proxy for delegation trust), or provide a wholly new experimental design, providing a detailed justification for the alternative, including any resulting changes to the performance targets.
+Propose changes to the group-then-single human geometric region reduction design (that will assess whether TA2 algorithms can be aligned with a group of humans and ultimately a single human), or provide a wholly new experimental design, providing a detailed justification for the alternative, including any resulting changes to the program metrics.
+
+Deliverables:
+Domain knowledge documentation
+Evaluation design document including design for decision-makers with known misaligned attributes
+Experimental protocols for any work involving Human Subjects Research (HSR) documented and submitted according to HSR procedures and study pre-registration 
+requirements
+Plan for recruiting trusted decision-makers; evaluation report within 30 days of the completion of each evaluation; documentation for metrics developed for the program
+Scoring software and documentation; scenario environment software, including any modifications

@@ -26,10 +26,10 @@ $OldPath = Get-Location
 conda activate base
 
 # Delete environment folder
-# ."${PowerScriptsDirectory}\delete_conda_environment.ps1"
+."${PowerScriptsDirectory}\delete_conda_environment.ps1"
 
 # Create environment folder
-# ."${PowerScriptsDirectory}\create_conda_environment.ps1"
+."${PowerScriptsDirectory}\create_conda_environment.ps1"
 # ."${PowerScriptsDirectory}\update_conda_environment.ps1"
 
 # Bring up the workspace in Edge

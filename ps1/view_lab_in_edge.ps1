@@ -9,12 +9,18 @@ If ($TokenString -Eq "") {
 	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
 	Write-Host "             Launching the Jupyter server in its own window" -ForegroundColor Green
 	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	$ExePath = "${EnvironmentPath}\Scripts\jupyter-lab.exe"
+	$ExecutablePath  = "${EnvironmentPath}\Scripts\jupyter-lab.exe"
 	$CommandParameters = "--no-browser --config=${HomeDirectory}\.jupyter\jupyter_notebook_config.py --notebook-dir=${RepositoriesDirectory}"
 	$OutputFile = "$Env:UserProfile\Downloads\lab_output.txt"
-	# $ProcessOutput = Start-Process -FilePath $ExePath -ArgumentList $CommandParameters -RedirectStandardOutput $OutputFile
-	$ArgList = "${ExePath} ${CommandParameters}"
+	# $ProcessOutput = Start-Process -FilePath $ExecutablePath  -ArgumentList $CommandParameters -RedirectStandardOutput $OutputFile
+	$ArgList = "${ExecutablePath} ${CommandParameters}"
+	$OriginalProcesses = Get-Process | Where-Object {$_.Name -eq "python"} | Select-Object Id
 	$ProcessOutput = Start-Process PowerShell -ArgumentList $ArgList -RedirectStandardOutput $OutputFile
+	$StartedProcesses = Get-Process | Where-Object {$_.Name -eq "python"} | Select-Object Id
+	$NewProcess = $StartedProcesses | Where-Object { !($OriginalProcesses -contains $_) }
+	if ($NewProcess) {
+		Write-Host "To stop this programmatically, you could do taskkill /F /PID $NewProcess."
+	}
 	
 	# Read and display the captured output from the file
 	# $OutputContent = Get-Content -Path $OutputFile
@@ -44,28 +50,4 @@ If ($TokenString -Ne "") {
 	# All other workspaces have a name that is part of the URL:
 	# http(s)://<server:port>/<lab-location>/lab/workspaces/foo
 	Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList "http://localhost:8888/lab/workspaces/${EnvironmentName}/tree/align-system/explorations/ITM%20Align%20System%20Exploration.ipynb"
-}
-
-# Add a workspace file for bookmarking. You can create a temporary workspace file in the 
-# $Env:UserProfile\.jupyter\lab\workspaces folder by going to this URL:
-# http://localhost:8888/lab/?clone=$EnvironmentName
-# Get the path to the Jupyter workspaces folder
-$WorkspacesFolder = "$Env:UserProfile\.jupyter\lab\workspaces"
-
-# Check if the folder exists
-if (Test-Path $WorkspacesFolder) {
-	
-	# Empty the folder
-	Remove-Item $WorkspacesFolder -Recurse -Force
-	
-	# Create the workspace
-	Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList "http://localhost:8888/lab/?clone=${EnvironmentName}"
-	
-	# Get the list of files in the folder
-	$FilesList = Get-ChildItem $WorkspacesFolder
-	
-	# Get the path to the only file in the folder
-	$FilePath = $FilesList[0].FullName
-	Write-Host "${FilePath}"
-	
 }

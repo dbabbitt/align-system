@@ -3,15 +3,24 @@
 cd $RepositoryPath
 Write-Host ""
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+
 # Assume here that if the environment folder is missing, the environment was already deleted
 If (Test-Path -Path $EnvironmentPath -PathType Container) {
-	#Write-Host "${EnvironmentName} is a conda environment." -ForegroundColor Red
-	Write-Host "               Updating the ${DisplayName} conda environment (${EnvironmentName})" -ForegroundColor Green
+	Write-Host "           Updating the ${DisplayName} conda environment (${EnvironmentName})" -ForegroundColor Green
 } Else {
-	#Write-Host "${EnvironmentName} is not a conda environment." -ForegroundColor Green
-	Write-Host "               Creating the ${DisplayName} conda environment (${EnvironmentName})" -ForegroundColor Green
+	Write-Host "           Creating the ${DisplayName} conda environment (${EnvironmentName})" -ForegroundColor Green
 }
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+
 # You can control where a conda environment lives by providing a path to a target directory when creating the environment.
-conda env update --prefix $EnvironmentPath --file $RepositoryPath\environment.yml --prune
+$FilePath = "${RepositoryPath}\environment.yml"
+If (Test-Path $FilePath) {
+	conda env update --prefix $EnvironmentPath --file $FilePath --prune --quiet
+}
+
+If (conda env list | findstr $EnvironmentName) {
+	conda update --all --yes --quiet --name $EnvironmentName
+} Else {
+	conda create --yes --quiet --name $EnvironmentName python=3.10
+}
 conda info --envs

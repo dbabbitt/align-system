@@ -215,3 +215,40 @@ function Get-Token-String {
 	
 	Return $TokenString
 }
+
+function Get-Active-Conda-Environment {
+	<#
+	.SYNOPSIS
+	Get the name of the active conda environment.
+
+	.DESCRIPTION
+	This function runs the `conda info --envs` command to get a list of all conda environments.
+	It then splits the output of the command into a list of lines. For each line,
+	the function checks if it contains an asterisk (*). If it does,
+	the function splits the line on the asterisk and returns the name of the environment.
+	If no line contains an asterisk, the function returns "None".
+
+	.PARAMETER
+	None.
+
+	.OUTPUTS
+	System.String. The name of the active conda environment.
+
+	.EXAMPLE
+		$ActiveEnvironment = Get-Active-Conda-Environment
+	#>
+
+	$CondaInfo = & conda info --envs
+	$SplitLines = $CondaInfo.Split([Environment]::NewLine)
+	foreach ($line in $SplitLines) {
+		if ($line.Contains("*")) {
+			# Write-Host "line: ${line}"
+			$SplitInfo = $line.Split("*")
+			$EnvironmentName = $SplitInfo[-1]
+			$SplitInfo = $line.Split("\")
+			$EnvironmentName = $SplitInfo[-1]
+			return $EnvironmentName
+		}
+	}
+	return "None"
+}

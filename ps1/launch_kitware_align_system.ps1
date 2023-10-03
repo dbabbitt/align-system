@@ -15,7 +15,9 @@ $HomeDirectory = $Env:UserProfile
 $RepositoriesDirectory = "${HomeDirectory}\Documents\GitHub"
 $RepositoryPath = "${RepositoriesDirectory}\${RepositoryName}"
 $PowerScriptsDirectory = "${RepositoryPath}\ps1"
-$EnvironmentLocation = "${HomeDirectory}\anaconda3\envs\${EnvironmentName}"
+$EnvironmentsDirectory = "${HomeDirectory}\anaconda3\envs"
+$EnvironmentPath = "${EnvironmentsDirectory}\${EnvironmentName}"
+$DisplayName = "ALIGN System"
 
 conda activate base
 
@@ -87,28 +89,22 @@ if ($IsCondaFixed -eq $false) {
 # conda update --yes --quiet --name base --channel defaults conda
 
 # Create the environment
-Write-Host ""
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-if (conda env list | findstr $EnvironmentName) {
-	Write-Host "                       Updating the ${EnvironmentName} environment" -ForegroundColor Green
-	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	conda update --all --yes --quiet --name $EnvironmentName
-} else {
-	Write-Host "                       Creating the ${EnvironmentName} environment" -ForegroundColor Green
-	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	conda create --yes --quiet --name $EnvironmentName python=3.10
-}
+."${PowerScriptsDirectory}\update_conda_environment.ps1"
 
 # Activate the environment
-Write-Host ""
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-Write-Host "                       Activating the ${EnvironmentName} environment" -ForegroundColor Green
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-conda activate $EnvironmentName
-conda info --envs
+."${PowerScriptsDirectory}\function_definitions.ps1"
+$ActiveEnvironment = Get-Active-Conda-Environment
+if (-not ($ActiveEnvironment -contains $EnvironmentName)) {
+	Write-Host ""
+	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	Write-Host "                       Activating the ${EnvironmentName} environment" -ForegroundColor Green
+	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	conda activate $EnvironmentName
+	conda info --envs
+}
 
 # Install the required dependencies
-$FilePath = "${EnvironmentLocation}\Lib\site-packages\torch\__init__.py"
+$FilePath = "${EnvironmentPath}\Lib\site-packages\torch\__init__.py"
 if (Test-Path $FilePath) {
 	Write-Host ""
 	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
@@ -132,4 +128,6 @@ Write-Host "--------------------------------------------------------------------
 Write-Host "       Running the Server from the ${RepositoryName} repository" -ForegroundColor Green
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
 cd "${RepositoriesDirectory}\itm-mvp\itm_server"
+# Get-Process | Where-Object {$_.Name -eq "python"} | ForEach-Object {$_.ProcessName; $_.Id}
 python -m swagger_server
+# Get-Process | Where-Object {$_.Name -eq "python"} | ForEach-Object {$_.ProcessName; $_.Id}

@@ -9,10 +9,20 @@
 
 cls
 
-# Open a Windows Edge browser tab
+# Set up global variables
+$DisplayName = "ALIGN System"
+$RepositoryName = "align-system"
 $EnvironmentName = "align_system"
-$TokenString = "c5609a9b73cb0d7d1e7c93ad51cc8d62333cca248c7d2696"
-	Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList "http://localhost:8888/lab/workspaces/${EnvironmentName}&token=${TokenString}"
 
-# Do something else
-Write-Host "The browser tab is loading..."
+$HomeDirectory = $Env:UserProfile
+$EnvironmentsDirectory = "${HomeDirectory}\anaconda3\envs"
+$RepositoriesDirectory = "${HomeDirectory}\Documents\GitHub"
+$RepositoryPath = "${RepositoriesDirectory}\${RepositoryName}"
+$PowerScriptsDirectory = "${RepositoryPath}\ps1"
+$EnvironmentPath = "${EnvironmentsDirectory}\${EnvironmentName}"
+$OldPath = Get-Location
+
+conda activate $EnvironmentName
+."${PowerScriptsDirectory}\function_definitions.ps1"
+$ActiveEnvironment = Get-Active-Conda-Environment
+Write-Host "${ActiveEnvironment}"

@@ -41,25 +41,30 @@ else {
 }
 
 # Create the environment
-Write-Host ""
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-if (conda env list | findstr $EnvironmentName) {
-	Write-Host "                       Updating the ${EnvironmentName} environment" -ForegroundColor Green
-	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	conda update --all --yes --quiet --name $EnvironmentName
-} else {
-	Write-Host "                       Creating the ${EnvironmentName} environment" -ForegroundColor Green
-	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-	conda create --yes --quiet --name $EnvironmentName python=3.10
-}
+# Write-Host ""
+# Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+# if (conda env list | findstr $EnvironmentName) {
+	# Write-Host "                       Updating the ${EnvironmentName} environment" -ForegroundColor Green
+	# Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	# conda update --all --yes --quiet --name $EnvironmentName
+# } else {
+	# Write-Host "                       Creating the ${EnvironmentName} environment" -ForegroundColor Green
+	# Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	# conda create --yes --quiet --name $EnvironmentName python=3.10
+# }
 
 # Activate the environment
-Write-Host ""
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-Write-Host "                       Activating the ${EnvironmentName} environment" -ForegroundColor Green
-Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
-conda activate $EnvironmentName
-conda info --envs
+."${PowerScriptsDirectory}\function_definitions.ps1"
+$ActiveEnvironment = Get-Active-Conda-Environment
+# Write-Host "${ActiveEnvironment} -contains ${EnvironmentName}"
+if (-not ($ActiveEnvironment -contains $EnvironmentName)) {
+	Write-Host ""
+	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	Write-Host "                       Activating the ${EnvironmentName} environment" -ForegroundColor Green
+	Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+	conda activate $EnvironmentName
+	conda info --envs
+}
 
 # Install the TA3 ITM MVP client module
 $FilePath = "${EnvironmentLocation}\Lib\site-packages\swagger-client.egg-link"

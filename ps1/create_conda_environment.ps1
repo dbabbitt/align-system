@@ -52,17 +52,52 @@ If ($WorkspacePath -Ne $null) {
 	If (Test-Path -Path $WorkspacePath -PathType Leaf) {
 		(Get-Content $WorkspacePath) | ConvertFrom-Json | ConvertTo-Json -depth 7 | Format-Json -Indentation 2
 	}
+} else {
+
+	# Get the path to the Jupyter workspaces folder
+	$WorkspacesFolder = "$Env:UserProfile\.jupyter\lab\workspaces"
+
+	# Check if the folder exists
+	if (Test-Path $WorkspacesFolder) {
+		
+		# Empty the folder
+		Remove-Item $WorkspacesFolder -Recurse -Force
+		if (-not (Test-Path $WorkspacesFolder)) {
+			 New-Item -ItemType Directory -Path $WorkspacesFolder
+		}
+		
+		# Create the workspace
+		Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList "http://localhost:8888/lab/?clone=${EnvironmentName}"
+		
+		# Get a list of the files in the workspaces folder
+		$FilesList = Get-ChildItem $WorkspacesFolder
+		
+		# Loop through the files list
+		if ($FilesList -ne $null) {
+			foreach ($FileObj in $FilesList) {
+				Write-Host $FileObj.FullName
+			}
+		}
+		
+	}
+	
 }
 
 # Clean up the mess
+# (Deprecated) Updating extensions with the jupyter labextension
+# update command is now deprecated and will be 
+# removed in a future major version of JupyterLab.
+<#
 Write-Host ""
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
 Write-Host "                          Cleaning the staging area" -ForegroundColor Green
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+
 # jupyter-lab clean
 $CommandString = "${EnvironmentPath}\Scripts\jupyter-lab.exe clean"
 Write-Host "CommandString = '${CommandString}'" -ForegroundColor Red
 Invoke-Expression $CommandString
+
 # jupyter labextension list
 $CommandString = "${EnvironmentPath}\Scripts\jupyter-labextension.exe list"
 Write-Host "CommandString = '${CommandString}'" -ForegroundColor Red
@@ -80,6 +115,7 @@ Write-Host ""
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
 Write-Host "                       Rebuilding the Jupyter Lab assets" -ForegroundColor Green
 Write-Host "-------------------------------------------------------------------------------" -ForegroundColor Green
+
 #,"${HomeDirectory}\anaconda3\etc\jupyter","C:\ProgramData\jupyter"
 $ConfigFoldersList = @("${HomeDirectory}\.jupyter")
 ForEach ($ConfigFolder in $ConfigFoldersList) {
@@ -94,10 +130,13 @@ ForEach ($ConfigFolder in $ConfigFoldersList) {
 		Copy-Item $ConfigPath -Destination $NewConfigPath
 	}
 }
+
 # jupyter-lab build
 $CommandString = "${EnvironmentPath}\Scripts\jupyter-lab.exe build"
 Write-Host "CommandString = '${CommandString}'" -ForegroundColor Red
 Invoke-Expression $CommandString
+#>
+
 
 # Copy the favicon asset to the static directory
 $IconPath = "${EnvironmentPath}\saves\ico\notebook_static_favicon.ico"
