@@ -154,7 +154,8 @@ class NotebookUtilities(object):
             b (str): The second string.
         
         Returns:
-            float: The similarity between the two strings, as a float between 0 and 1.
+            float
+                The similarity between the two strings, as a float between 0 and 1.
         """
         from difflib import SequenceMatcher
         
@@ -170,7 +171,8 @@ class NotebookUtilities(object):
             x (str): The input string containing potential year information.
         
         Returns:
-            int or float: The extracted first year element, or NaN if no valid year element is found.
+            int or float
+                The extracted first year element, or NaN if no valid year element is found.
         """
         
         # Split the input string using various separators
@@ -257,7 +259,8 @@ class NotebookUtilities(object):
             verbose (bool, optional): If True, prints verbose output. Default is False.
         
         Returns:
-            str: A string containing the concatenated nouns with appropriate conjunctions.
+            str
+                A string containing the concatenated nouns with appropriate conjunctions.
         
         Example:
             noun_list = ['apples', 'oranges', 'bananas']
@@ -308,7 +311,8 @@ class NotebookUtilities(object):
             ages_list (list): A list of ages for which jitter values are generated.
         
         Returns:
-            list of float: A list of jitter values corresponding to the input ages.
+            list of float
+                A list of jitter values corresponding to the input ages.
         """
         
         # Initialize an empty list to store jitter values
@@ -345,7 +349,8 @@ class NotebookUtilities(object):
             ages_list (list of int or float): A list of ages to be split into sublists.
     
         Returns:
-            list of lists of int or float: A list of sublists, each containing consecutive ages.
+            list of lists of int or float
+                A list of sublists, each containing consecutive ages.
         """
         splits_list = []  # List to store sublists of consecutive ages
         current_list = []  # Temporary list to store the current consecutive ages
@@ -826,20 +831,6 @@ class NotebookUtilities(object):
         if (count > 0): result.append(f'{element} x{str(count)}')
         
         return(result)
-    
-    
-    @staticmethod
-    def get_clusters_dictionary(tuples_list, tuple_idx=-1, cluster_fn=lambda x: x, verbose=False):
-        
-        # Separate tuples based on cluster ID (tuple index value)
-        clusters_dict = {}
-        for cluster_tuple in tuples_list:
-            cluster_value = cluster_fn(cluster_tuple[tuple_idx])
-            if cluster_value not in clusters_dict: clusters_dict[cluster_value] = []
-            clusters_dict[cluster_value].append(cluster_tuple)
-        if verbose: print(f'\n\nclusters_dict: {clusters_dict}')
-        
-        return clusters_dict
     
     
     @staticmethod
@@ -1787,7 +1778,7 @@ class NotebookUtilities(object):
     
     
     @staticmethod
-    def describe_procedure(function_obj, docstring_prefix='The procedure to'):
+    def describe_procedure(function_obj, docstring_prefix='The procedure to', verbose=False):
         """
         Generate a step-by-step description of how to perform a function by hand from its comments.
         
@@ -1800,6 +1791,8 @@ class NotebookUtilities(object):
                 The function object whose procedure needs to be described.
             docstring_prefix (str, optional):
                 A prefix to prepend to the procedure description. Default is 'The procedure to'.
+            verbose (bool, optional):
+                Whether to print debug messages. Defaults to False.
         
         Returns:
             None
@@ -1824,7 +1817,8 @@ class NotebookUtilities(object):
             
             # Split the source code to separate docstring and function body
             parts_list = re.split('"""', source_code, 0)
-            if parts_list:
+            if verbose: print(len(parts_list), parts_list)
+            if len(parts_list) > 1:
                 
                 # Clean the docstring part so that only the top one-sentence paragraph is included
                 docstring = re.sub(r'\s+', ' ', parts_list[1].strip().split('.')[0])
@@ -2181,13 +2175,13 @@ class NotebookUtilities(object):
     
     
     @staticmethod
-    def get_column_descriptions(df, column_list=None, verbose=False):
+    def get_column_descriptions(df, analysis_columns=None, verbose=False):
         """
         Generate a DataFrame containing descriptive statistics for specified columns in a given DataFrame.
         
         Parameters:
             df (pandas.DataFrame): The DataFrame to analyze.
-            column_list (list of str, optional): A list of specific columns to analyze.
+            analysis_columns (list of str, optional): A list of specific columns to analyze.
                 If None, all columns will be analyzed. Defaults to None.
             verbose (bool, optional): If True, display intermediate steps for debugging. Default is False.
         
@@ -2195,26 +2189,26 @@ class NotebookUtilities(object):
             pandas.DataFrame: A DataFrame containing the descriptive statistics of the analyzed columns.
         """
         
-        # If column_list is not provided, use all columns in the DataFrame
-        if column_list is None: column_list = df.columns
+        # If the analysis_columns is not provided, use all columns in the data frame
+        if analysis_columns is None: analysis_columns = df.columns
         
-        # Convert the CategoricalDtype instances to their string representations, and then group by those strings
+        # Convert the CategoricalDtype instances to strings, then group the columns by them
         grouped_columns = df.columns.to_series().groupby(df.dtypes.astype(str)).groups
         
         # Initialize an empty list to store the descriptive statistics rows
         rows_list = []
         
-        # Iterate over each data type and its corresponding column list
+        # Iterate over each data type and its corresponding column group
         for dtype, dtype_column_list in grouped_columns.items():
             for column_name in dtype_column_list:
                 
-                # Check if the column is in the specified column list
-                if column_name in column_list:
+                # Check if the column is in the analysis columns
+                if column_name in analysis_columns:
                     
                     # Create a boolean mask for null values in the column
                     null_mask_series = df[column_name].isnull()
                     
-                    # Dictionary to store column description
+                    # Create a row dictionary to store the column description
                     row_dict = {
                         'column_name': column_name,
                         'dtype': str(dtype),
@@ -2255,15 +2249,16 @@ class NotebookUtilities(object):
                     
                     # Set only_integers to NaN if an error occurs
                     except Exception: row_dict['only_integers'] = float('nan')
-    
+                    
                     # Append the row dictionary to the rows list
                     rows_list.append(row_dict)
-    
+        
         # Define column order for the resulting DataFrame
         columns_list = [
-            'column_name', 'dtype', 'count_blanks', 'count_uniques', 'count_zeroes', 'has_dates', 'min_value', 'max_value', 'only_integers'
+            'column_name', 'dtype', 'count_blanks', 'count_uniques', 'count_zeroes',
+            'has_dates', 'min_value', 'max_value', 'only_integers'
         ]
-
+        
         # Create a data frame from the list of dictionaries
         blank_ranking_df = DataFrame(rows_list, columns=columns_list)
         
@@ -2783,19 +2778,36 @@ class NotebookUtilities(object):
     @staticmethod
     def get_relative_position(second_point, first_point=None):
         """
-        Calculate the absolute position of a point relative to another point.
+        Calculate the position of a point relative to another point.
+        
+        This static method calculates the relative position of a second 
+        point (`second_point`) based on a reference point (`first_point`). 
+        If `first_point` is not provided, it assumes the origin (0, 0, 0) 
+        by calling a separate function `get_coordinates` (assumed to be 
+        implemented elsewhere).
         
         Parameters:
-            second_point (tuple): The coordinates of the second point.
-            first_point (tuple, optional): The coordinates of the first point. If not specified,
-                the origin is retrieved from get_coordinates.
+            second_point (tuple):
+                A tuple containing the x, y, and z coordinates of the second point.
+            first_point (tuple, optional):
+                A tuple containing the x, y, and z coordinates of the reference 
+                point. If not specified, the origin is retrieved from 
+                get_coordinates.
         
         Returns:
-            tuple: The absolute coordinates of the second point.
+            tuple:
+                A tuple containing the x, y, and z coordinates of the second point 
+                relative to the reference point.
         """
+        
+        # Retrieve the coordinates for both points, defaulting to the origin for the first point if not provided
         x1, x2, y1, y2, z1, z2 = self.get_coordinates(second_point, first_point=first_point)
-    
-        return (round(x1 + x2, 1), round(y1 + y2, 1), round(z1 + z2, 1))
+        
+        # Calculate the relative position by adding corresponding coordinates and rounding to one decimal place
+        relative_position = (round(x1 + x2, 1), round(y1 + y2, 1), round(z1 + z2, 1))
+        
+        # Return the calculated relative position as a tuple
+        return relative_position
     
     
     def get_nearest_neighbor(self, base_point, neighbors_list):
@@ -2968,11 +2980,19 @@ class NotebookUtilities(object):
         """
         Generate a color cycler for plotting with a specified number of colors.
         
+        This static method creates a color cycler object (`cycler.Cycler`) 
+        suitable for Matplotlib plotting. The color cycler provides a 
+        sequence of colors to be used for lines, markers, or other plot 
+        elements. The function selects a colormap based on the requested 
+        number of colors (`n`).
+        
         Parameters:
-            n (int): The number of colors to include in the cycler.
+            n (int):
+                The number of colors to include in the cycler.
         
         Returns:
-            cycler.Cycler: A color cycler object containing the specified number of colors.
+            cycler.Cycler
+                A color cycler object containing the specified number of colors.
         
         Example:
             color_cycler = nu.get_color_cycler(len(possible_cause_list))
@@ -2986,11 +3006,21 @@ class NotebookUtilities(object):
         # Import the `cycler` module from matplotlib
         from cycler import cycler
         
-        # Choose a color map based on the number of colors needed
-        if n < 9: color_cycler = cycler('color', plt.cm.Accent(np.linspace(0, 1, n)))
-        elif n < 11: color_cycler = cycler('color', plt.cm.tab10(np.linspace(0, 1, n)))
-        elif n < 13: color_cycler = cycler('color', plt.cm.Paired(np.linspace(0, 1, n)))
-        else: color_cycler = cycler('color', plt.cm.tab20(np.linspace(0, 1, n)))
+        # Use the Accent color map for less than 9 colors
+        if n < 9:
+            color_cycler = cycler('color', plt.cm.Accent(np.linspace(0, 1, n)))
+        
+        # Use tab10 colormap for 9 or 10 colors
+        elif n < 11:
+            color_cycler = cycler('color', plt.cm.tab10(np.linspace(0, 1, n)))
+        
+        # Use Paired colormap for 11 or 12 colors
+        elif n < 13:
+            color_cycler = cycler('color', plt.cm.Paired(np.linspace(0, 1, n)))
+        
+        # Use the tab20 color map for 13 or more colors
+        else:
+            color_cycler = cycler('color', plt.cm.tab20(np.linspace(0, 1, n)))
         
         return color_cycler
     
@@ -3012,7 +3042,8 @@ class NotebookUtilities(object):
             title (str): The title of the plot.
         
         Returns:
-            None: The function plots the graph directly using matplotlib.
+            None
+                The function plots the graph directly using matplotlib.
         """
         
         # Drop rows with NaN values, group by xname, and calculate mean and standard deviation
@@ -3150,7 +3181,8 @@ class NotebookUtilities(object):
             is_y_temporal (bool, optional): If True, y-axis labels will be formatted as temporal values (default: True).
         
         Returns:
-            None: The function plots the graph directly using seaborn and matplotlib.
+            None
+                The function plots the graph directly using seaborn and matplotlib.
         """
         
         # Get the transformed data frame
@@ -3316,7 +3348,8 @@ class NotebookUtilities(object):
                 Whether to print debug output. Defaults to False.
         
         Returns:
-            tuple: The figure and axis object for the generated scatter plot.
+            tuple
+                The figure and axis object for the generated scatter plot.
         """
         
         # Ensure the dataframe index is string-typed for annotations
@@ -3453,7 +3486,8 @@ class NotebookUtilities(object):
             verbose (bool, optional): Whether to print debug info. Defaults to False.
         
         Returns:
-            None: The function plots the graph directly using matplotlib.
+            None
+                The function plots the graph directly using matplotlib.
         """
         
         # Configure the color dictionary
@@ -3576,26 +3610,58 @@ class NotebookUtilities(object):
     
     @staticmethod
     def get_color_cycled_list(alphabet_list, color_dict, verbose=False):
-        if verbose: print(f'alphabet_list = {alphabet_list}')
-        if verbose: print(f'color_dict = {color_dict}')
+        """
+        Get a list of colors cycled from the given color dictionary and the default color cycle.
         
-        # Match the colors with the color cycle and color dictionary
+        This method matches each alphabet in the input list with a color 
+        from the input color dictionary. If a color is not specified for 
+        an alphabet, it assigns the next color from the matplotlib color 
+        cycle.
+        
+        Parameters:
+            alphabet_list (list of str):
+                A list of keys for which colors are to be matched.
+            color_dict (dict):
+                A dictionary mapping elements from the alphabet to desired colors.
+            verbose (bool, optional):
+                If True, print debug information. Default is False.
+        
+        Returns:
+            list of str
+                A list of colors, where the length matches the alphabet list. 
+                Colors are assigned based on the color dictionary and the 
+                Matplotlib color cycle for missing entries.
+        """
+        
+        # Print the input alphabet list and color dictionary if verbose mode is on
+        if verbose:
+            print(f'alphabet_list = {alphabet_list}')
+            print(f'color_dict = {color_dict}')
+        
+        # Import the cycle iterator from itertools
         from itertools import cycle
         
-        # Get the color cycle from rcParams
+        # Get the color cycle from matplotlib's rcParams
         prop_cycle = plt.rcParams['axes.prop_cycle']
         colors = cycle(prop_cycle.by_key()['color'])
         
+        # Initialize an empty list to store the resulting colors
         colors_list = []
-        for key in alphabet_list:
-            value = color_dict.get(key)
-            
-            # Get the next color in the cycle if missing from the dictionary
-            if (value is None): value = next(colors)
-            
-            colors_list.append(value)
-        if verbose: print(f'colors_list = {colors_list}')
         
+        # Iterate over each key in the alphabet list
+        for key in alphabet_list:
+            
+            # Assign color from dictionary if available, otherwise use next color from the cycle
+            value = color_dict.get(key, next(colors))
+            
+            # Append the color to the colors list
+            colors_list.append(value)
+        
+        # Print the resulting colors list if verbose mode is on
+        if verbose:
+            print(f'colors_list = {colors_list}')
+        
+        # Return the final list of colors
         return colors_list
     
     
@@ -3845,7 +3911,8 @@ class NotebookUtilities(object):
             gap (bool, optional): Whether to leave a gap between different values in a sequence. Defaults to True.
         
         Returns:
-            plt.Figure: The matplotlib figure object.
+            plt.Figure
+                The matplotlib figure object.
         """
         
         # Determine the maximum sequence length
